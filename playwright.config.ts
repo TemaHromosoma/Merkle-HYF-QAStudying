@@ -30,6 +30,7 @@ export default defineConfig({
       baseURL: 'https://raider-test-site.onrender.com/',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    screenshot: 'only-on-failure',
     trace: 'on-first-retry',
   },
 
@@ -40,7 +41,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
+   /* {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
@@ -48,7 +49,7 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    },
+    },*/
 
     /* Test against mobile viewports. */
     // {
