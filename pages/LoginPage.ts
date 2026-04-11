@@ -34,7 +34,7 @@ export class LoginPage {
 
         this.welcomeMessage = page.getByText('Welcome to your account');
 
-        this.errorMessage = page.getByText('Error: Incorrect login or');
+        this.errorMessage = page.locator('.alert.alert-error');
     }
 
     async login(username: string, password: string) {

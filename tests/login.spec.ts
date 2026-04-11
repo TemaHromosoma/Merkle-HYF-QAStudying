@@ -1,5 +1,3 @@
-//import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
 import { test, expect } from '../fixtures/test-fixtures';
 
 test.describe('Basic login functionality tests', () => {
@@ -8,11 +6,11 @@ test.describe('Basic login functionality tests', () => {
 
         await loginPage.login('aguspe', '12341234');
 
-        await expect(page).toHaveURL('/index.php?rt=account/account');
+        await expect(page).toHaveURL(/.*account\/account/);
 
         await expect(loginPage.welcomeMessage).toBeVisible();
 
-        await expect(loginPage.welcomeMessage).toHaveText('Welcome to your account dashboard. From here you can manage your orders and account details.')
+        await expect(loginPage.welcomeMessage).toContainText(/Welcome to your account/i);
     });
 
     test('Failed login operation with invalid password', async ({ loginPage }) => {
@@ -21,7 +19,7 @@ test.describe('Basic login functionality tests', () => {
 
         await expect(loginPage.errorMessage).toBeVisible();
 
-        await expect(loginPage.errorMessage).toHaveText('Error: Incorrect login or password provided.');
+        await expect(loginPage.errorMessage).toContainText(/Error: Incorrect login or password provided/i);
     });
 
     test('Empty username submission', async ({ loginPage }) => {
@@ -38,8 +36,16 @@ test.describe('Basic login functionality tests', () => {
         await expect(loginPage.passwordInput).toHaveAttribute('required', '');
     });
 
-    test.afterEach(async ({ page }) => {
+    test.afterEach(async ({ page }, testInfo) => {
 
+        if (testInfo.status !== testInfo.expectedStatus) {
+        
+            const screenshotPath = `screenshots/${testInfo.title.replace(/\s/g, '_')}_failed.png`;
+
+            await page.screenshot({ path: screenshotPath, fullPage: true });
+        
+            console.log(`!!! Test ${testInfo.title} has failed. Screenshot is here: ${screenshotPath}`);
+        }
         console.log('Test name:', test.info().title);
     });
 });

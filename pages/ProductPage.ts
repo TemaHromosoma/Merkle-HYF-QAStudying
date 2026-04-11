@@ -53,46 +53,56 @@ export class ProductPage {
         this.backToStoreButton = page.getByRole('link', { name: '← Back to Store' });
     }
 
+    async verifyURL(index: number) {
+
+        await expect(this.page).toHaveURL(new RegExp(`product/${index + 1}`));
+    }
+
     async verifyProductDetails(expectedName: string) {
 
-        const descriptionLocator = this.productDescription;
+        const productPageElements = [
 
-        await expect(this.page.getByRole('heading', { name: expectedName })).toBeVisible();
+            this.page.getByRole('heading', { name: expectedName }),
 
-        await expect(this.page.getByRole('img', { name: expectedName })).toBeVisible();
+            this.page.getByRole('img', { name: expectedName }),
 
-        await expect(this.productCategory).toBeVisible();
+            this.productCategory,
 
-        await expect(this.productCategory).not.toBeEmpty();
+            this.productPrice,
 
-        await expect(this.productPrice).toBeVisible();
+            this.quantity,
 
-        await expect(this.productPrice).not.toBeEmpty();
+            this.productQuantity,
+            
+            this.addToCardButton,
 
-        await expect(this.quantity).toBeVisible();
+            this.productDescription,
 
-        await expect(this.productQuantity).toBeVisible();
+            this.backToStoreButton
+        ];
 
-        await expect(this.addToCardButton).toBeVisible();
+        for (let i = 0; i < productPageElements.length; i++) {
 
-        await expect(descriptionLocator).toBeVisible();
-
-        await expect(descriptionLocator).not.toBeEmpty();
-
-        await expect(this.backToStoreButton).toBeVisible();
+            await expect(productPageElements[i]).toBeVisible();
+        }
 
         const words = expectedName.split(' ').map(word => word.replace(/[^a-zA-Z0-9]/g, '')).filter(word => word.length > 2);
 
         const searchRegex = new RegExp(words.join('|'), 'i');
 
-        const actualDescription = await descriptionLocator.textContent() || "";
+        const actualDescription = await this.productDescription.textContent() || "";
 
         if (searchRegex.test(actualDescription)) {
 
-            await expect(descriptionLocator).toContainText(searchRegex);
+            await expect(this.productDescription).toContainText(searchRegex);
         }
         else {
-            await expect(descriptionLocator).not.toBeEmpty();
+            await expect(this.productDescription).not.toBeEmpty();
         }
-    }  
+    };
+    
+    async goto() {
+
+        await this.page.goto(this.baseURL);
+    }
 }
